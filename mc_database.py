@@ -41,6 +41,7 @@ def database_init(connection):
         """
         CREATE TABLE IF NOT EXISTS events (
             event_id INTEGER PRIMARY KEY,
+            event_sku STRING,
             event_name STRING,
             event_city STRING,
             event_season INTEGER,
@@ -56,7 +57,7 @@ def database_init(connection):
         CREATE TABLE IF NOT EXISTS divisions (
             division_id INTEGER PRIMARY KEY,
             division_event INTEGER,
-            division_name STRING
+            division_name STRING,
             FOREIGN KEY (division_event) REFERENCES events(event_id)
         )
         """
@@ -68,18 +69,21 @@ def database_init(connection):
         CREATE TABLE IF NOT EXISTS matches (
             match_id INTEGER PRIMARY KEY,
             match_event INTEGER,
-            match_red_team1 INTEGER,
-            match_red_team2 INTEGER,
-            match_blue_team1 INTEGER,
-            match_blue_team2 INTEGER,
-            match_red_score INTEGER,
-            match_blue_score INTEGER,
+            match_red_team1 INTEGER NULL,
+            match_red_team2 INTEGER NULL,
+            match_blue_team1 INTEGER NULL,
+            match_blue_team2 INTEGER NULL,
+            match_red_score INTEGER NULL,
+            match_blue_score INTEGER NULL,
+            match_total INTEGER NULL,
             match_division INTEGER,
+            match_program INTEGER,
             FOREIGN KEY (match_event) REFERENCES events(event_id),
             FOREIGN KEY (match_red_team1) REFERENCES teams(team_id),
             FOREIGN KEY (match_red_team2) REFERENCES teams(team_id),
             FOREIGN KEY (match_blue_team1) REFERENCES teams(team_id),
             FOREIGN KEY (match_blue_team2) REFERENCES teams(team_id),
+            FOREIGN KEY (match_program) REFERENCES program_id(programs)
         )
         """
     )
@@ -156,3 +160,29 @@ def program_init(connection):
 def connect(file):
     connection = sqlite3.connect(file)
     return connection
+
+
+def insert_events(events, connection):
+    data = events
+    cursor = connection.cursor()
+    for event in data:
+        cursor.execute(
+            """
+            INSERT OR REPLACE INTO events (event_id, event_sku, event_name, event_city, event_season)
+            VALUES (?, ?, ?, ?, ?)
+            """, (event["id"], event["sku"], event["name"], event["location"]["city"], event["season"]["id"])
+        )
+    connection.commit()
+
+
+def insert_teams(teams, connection):
+    data = teams
+    cursor = connection.cursor()
+    for team in data:
+        cursor.execute(
+            """
+            INSERT OR REPLACE INTO teams (team_id, team_number, team_name, team_robot, team_organisation, team_city, team_grade, team_program)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """, (team["id"], team["number"], team["team_name"], team["robot_name"], team["organization"], team["location"]["city"], team["grade"], team["program"]["id"])
+        )
+    connection.commit()
