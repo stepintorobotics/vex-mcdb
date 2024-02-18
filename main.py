@@ -12,22 +12,23 @@ def index():
 @app.route("/refresh/events")
 def refresh_events():
     connection = mc_database.connect("indev.db")
-    events = re_fetch.fetch_events(180)
+    events = re_fetch.fetch_data("events", {"region": "United Kingdom", "season": [180]})
+    events.extend(re_fetch.fetch_data("events", {"region": "United Kingdom", "season": [181]}))
     mc_database.insert_events(events, connection)
-    events = re_fetch.fetch_events(181)
-    mc_database.insert_events(events, connection)
+    connection.close()
     return "OK"
 
 @app.route("/refresh/teams")
 def refresh_teams():
     connection = mc_database.connect("indev.db")
-    teams = re_fetch.fetch_teams(1)
+    teams = re_fetch.fetch_data("teams", {"country": "GB", "program": [1], "registered": True})
+    teams.extend(re_fetch.fetch_data("teams", {"country": "GB", "program": [41], "registered": True}))
     mc_database.insert_teams(teams, connection)
-    teams = re_fetch.fetch_teams(41)
-    mc_database.insert_teams(teams, connection)
+    connection.close()
     return "OK"
 
 if __name__ == "__main__":
     connection = mc_database.connect("indev.db")
     mc_database.program_init(connection)
+    connection.close()
     app.run(debug=True)
