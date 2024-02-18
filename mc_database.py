@@ -25,10 +25,11 @@ def database_init(connection):
     cursor.execute(
         """
         CREATE TABLE IF NOT EXISTS awards (
-            award_id INTEGER PRIMARY KEY,
+            award_id INTEGER,
+            award_team INTEGER,
             award_name STRING,
             award_event INTEGER,
-            award_team INTEGER,
+            PRIMARY KEY (award_id, award_team),
             FOREIGN KEY (award_event) REFERENCES events(event_id),
             FOREIGN KEY (award_team) REFERENCES teams(team_id)
         )
@@ -45,6 +46,7 @@ def database_init(connection):
             event_name STRING,
             event_city STRING,
             event_season INTEGER,
+            event_divisions INTEGER,
             FOREIGN KEY (event_season) REFERENCES seasons(season_id)
         )
         """
@@ -75,7 +77,6 @@ def database_init(connection):
             match_blue_team2 INTEGER NULL,
             match_red_score INTEGER NULL,
             match_blue_score INTEGER NULL,
-            match_total INTEGER NULL,
             match_division INTEGER,
             match_program INTEGER,
             FOREIGN KEY (match_event) REFERENCES events(event_id),
@@ -168,9 +169,9 @@ def insert_events(events, connection):
     for event in data:
         cursor.execute(
             """
-            INSERT OR REPLACE INTO events (event_id, event_sku, event_name, event_city, event_season)
-            VALUES (?, ?, ?, ?, ?)
-            """, (event["id"], event["sku"], event["name"], event["location"]["city"], event["season"]["id"])
+            INSERT OR REPLACE INTO events (event_id, event_sku, event_name, event_city, event_season, event_divisions)
+            VALUES (?, ?, ?, ?, ?, ?)
+            """, (event["id"], event["sku"], event["name"], event["location"]["city"], event["season"]["id"], len(event["divisions"]))
         )
     connection.commit()
 
@@ -184,5 +185,17 @@ def insert_teams(teams, connection):
             INSERT OR REPLACE INTO teams (team_id, team_number, team_name, team_robot, team_organisation, team_city, team_grade, team_program)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             """, (team["id"], team["number"], team["team_name"], team["robot_name"], team["organization"], team["location"]["city"], team["grade"], team["program"]["id"])
+        )
+    connection.commit()
+
+def insert_awards(awards, team, connection):
+    data = awards
+    cursor = connection.cursor()
+    for award in data:
+        cursor.execute(
+            """
+            INSERT OR REPLACE INTO awards (award_id, award_team, award_name, award_event)
+            VALUES (?, ?, ?, ?)
+            """, (award["id"], team, award["title"], award["event"]["id"])
         )
     connection.commit()
