@@ -27,6 +27,14 @@ def refresh_teams():
     connection.close()
     return "OK"
 
+@app.route("/refresh/events/awards")
+def refresh_awards():
+    connection = mc_database.connect("indev.db")
+    awards = re_fetch.fetch_data("events/51592/awards", {})
+    mc_database.insert_awards(awards, connection)
+    connection.close()
+    return awards
+
 if __name__ == "__main__":
     connection = mc_database.connect("indev.db")
     mc_database.program_init(connection)
