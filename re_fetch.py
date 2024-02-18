@@ -14,7 +14,6 @@ headers = {
     "Authorization": auth_key
 }
 
-
 def fetch_data(item, query):
     params = query
 
@@ -22,67 +21,14 @@ def fetch_data(item, query):
     all_data = []
     
     while True:
-        url_suffix = f"/{item}?per_page=250&{str(current_page)}"
+        url_suffix = f"/{item}?per_page=250&page={str(current_page)}"
         endpoint = url_base + url_suffix
 
         response = requests.get(endpoint, headers=headers, params=params)
         data = response.json()
         all_data.extend(data["data"])
 
-        if current_page == data["meta"]["last_page"]:
-            break
-
-        current_page += 1
-        time.sleep(1)
-
-    return all_data
-
-
-def fetch_teams(program):
-    params = {
-        "country": "GB",
-        "program": [program],
-        "registered": True
-    }
-
-    current_page = 1
-    all_data = []
-    
-    while True:
-        url_suffix = "/teams?per_page=250&page=" + str(current_page)
-        endpoint = url_base + url_suffix
-
-        response = requests.get(endpoint, headers=headers, params=params)
-        data = response.json()
-        all_data.extend(data["data"])
-
-        if current_page == data["meta"]["last_page"]:
-            break
-
-        current_page += 1
-        time.sleep(1)
-
-    return all_data
-
-
-def fetch_events(season):
-    params = {
-        "region": "United Kingdom",
-        "season": [season],
-    }
-
-    current_page = 1
-    all_data = []
-
-    while True:
-        url_suffix = "/events?per_page=250&page=" + str(current_page)
-        endpoint = url_base + url_suffix
-
-        response = requests.get(endpoint, headers=headers, params=params)
-        data = response.json()
-        all_data.extend(data["data"])
-
-        if current_page == data["meta"]["last_page"]:
+        if current_page >= data["meta"]["last_page"]:
             break
 
         current_page += 1

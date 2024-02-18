@@ -30,10 +30,14 @@ def refresh_teams():
 @app.route("/refresh/events/awards")
 def refresh_awards():
     connection = mc_database.connect("indev.db")
-    awards = re_fetch.fetch_data("events/51592/awards", {})
-    mc_database.insert_awards(awards, connection)
+    cursor = connection.cursor()
+    cursor.execute("SELECT event_id FROM events")
+    events = cursor.fetchall()
+    for event in events:
+        awards = re_fetch.fetch_data(f"events/{event[0]}/awards", {})
+        mc_database.insert_awards(awards, connection)
     connection.close()
-    return awards
+    return "OK"
 
 if __name__ == "__main__":
     connection = mc_database.connect("indev.db")
