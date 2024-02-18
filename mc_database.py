@@ -1,5 +1,6 @@
 import sqlite3
 
+# Creates tables, inserts preset data
 def database_init(connection):
     cursor = connection.cursor()
 
@@ -169,6 +170,7 @@ def connect(file):
 def insert_events(events, connection):
     data = events
     cursor = connection.cursor()
+    # Iterate through events and insert data
     for event in data:
         cursor.execute(
             """
@@ -182,6 +184,7 @@ def insert_events(events, connection):
 def insert_teams(teams, connection):
     data = teams
     cursor = connection.cursor()
+    # Iterate through teams and insert data
     for team in data:
         cursor.execute(
             """
@@ -194,6 +197,7 @@ def insert_teams(teams, connection):
 def insert_awards(awards, connection):
     data = awards
     cursor = connection.cursor()
+    # Iterate through events for awards and insert data
     for award in data:
         for winner in award["teamWinners"]:
             cursor.execute(
@@ -207,20 +211,25 @@ def insert_awards(awards, connection):
 def insert_matches(matches, connection):
     data = matches
     cursor = connection.cursor()
+    # Iterate through events
     for match in data:
+        # Get season of current match via events table
         event = match["event"]["id"]
         cursor.execute("SELECT event_season FROM events WHERE event_id = ?", (event,))
         season = cursor.fetchone()[0]
+        # 181 is VRC, so has four teams
         if season == 181:
             red1 = match["alliances"][1]["teams"][0]["team"]["id"]
             red2 = match["alliances"][1]["teams"][1]["team"]["id"]
             blue1 = match["alliances"][0]["teams"][0]["team"]["id"]
             blue2 = match["alliances"][0]["teams"][1]["team"]["id"]
+        # 180 is VIQRC, so has two teams
         elif season == 180:
             red1 = match["alliances"][1]["teams"][0]["team"]["id"]
             red2 = None
             blue1 = match["alliances"][0]["teams"][0]["team"]["id"]
             blue2 = None
+        # Insert into database
         cursor.execute(
             """
             INSERT OR REPLACE INTO matches (match_id, match_event, match_division, match_name, match_number, match_round, match_season, match_red_team1, match_red_team2, match_blue_team1, match_blue_team2, match_red_score, match_blue_score)
