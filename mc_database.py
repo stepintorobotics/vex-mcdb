@@ -71,20 +71,23 @@ def database_init(connection):
         CREATE TABLE IF NOT EXISTS matches (
             match_id INTEGER PRIMARY KEY,
             match_event INTEGER,
+            match_division INTEGER,
+            match_name STRING,
+            match_number INTEGER,
+            match_round INTEGER,
+            match_season INTEGER,
             match_red_team1 INTEGER NULL,
             match_red_team2 INTEGER NULL,
             match_blue_team1 INTEGER NULL,
             match_blue_team2 INTEGER NULL,
             match_red_score INTEGER NULL,
             match_blue_score INTEGER NULL,
-            match_division INTEGER,
-            match_program INTEGER,
             FOREIGN KEY (match_event) REFERENCES events(event_id),
             FOREIGN KEY (match_red_team1) REFERENCES teams(team_id),
             FOREIGN KEY (match_red_team2) REFERENCES teams(team_id),
             FOREIGN KEY (match_blue_team1) REFERENCES teams(team_id),
             FOREIGN KEY (match_blue_team2) REFERENCES teams(team_id),
-            FOREIGN KEY (match_program) REFERENCES program_id(programs)
+            FOREIGN KEY (match_season) REFERENCES program_id(programs)
         )
         """
     )
@@ -199,4 +202,29 @@ def insert_awards(awards, connection):
                 VALUES (?, ?, ?, ?)
                 """, (award["id"], winner["team"]["id"], award["title"], award["event"]["id"])
             )
+    connection.commit()
+
+def insert_matches(matches, connection):
+    data = matches
+    cursor = connection.cursor()
+    for match in data:
+        event = match["event"]["id"]
+        cursor.execute("SELECT event_season FROM events WHERE event_id = ?", (event,))
+        season = cursor.fetchone()[0]
+        if season == 181:
+            red1 = match["alliances"][1]["teams"][0]["team"]["id"]
+            red2 = match["alliances"][1]["teams"][1]["team"]["id"]
+            blue1 = match["alliances"][0]["teams"][0]["team"]["id"]
+            blue2 = match["alliances"][0]["teams"][1]["team"]["id"]
+        elif season == 180:
+            red1 = match["alliances"][1]["teams"][0]["team"]["id"]
+            red2 = None
+            blue1 = match["alliances"][0]["teams"][0]["team"]["id"]
+            blue2 = None
+        cursor.execute(
+            """
+            INSERT OR REPLACE INTO matches (match_id, match_event, match_division, match_name, match_number, match_round, match_season, match_red_team1, match_red_team2, match_blue_team1, match_blue_team2, match_red_score, match_blue_score)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (match["id"], event, match["division"]["id"], match["name"], match["matchnum"], match["round"], season, red1, red2, blue1, blue2, match["alliances"][1]["score"], match["alliances"][0]["score"])
+        )
     connection.commit()

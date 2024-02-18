@@ -39,6 +39,19 @@ def refresh_awards():
     connection.close()
     return "OK"
 
+@app.route("/refresh/events/matches")
+def refresh_matches():
+    connection = mc_database.connect("indev.db")
+    cursor = connection.cursor()
+    cursor.execute("SELECT event_id, event_divisions FROM events")
+    events = cursor.fetchall()
+    for event, num_divisions in events:
+        for division in range(1, num_divisions + 1):
+            matches = re_fetch.fetch_data(f"events/{event}/divisions/{division}/matches", {})
+            mc_database.insert_matches(matches, connection)
+    connection.close()
+    return "OK"
+
 if __name__ == "__main__":
     connection = mc_database.connect("indev.db")
     mc_database.program_init(connection)
