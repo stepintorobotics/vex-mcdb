@@ -24,11 +24,9 @@ def fetch_teams(program):
 
     current_page = 1
     all_data = []
-
-    url_suffix = "/teams"
     
     while True:
-        url_suffix = "/teams?page=" + str(current_page)
+        url_suffix = "/teams?per_page=250&page=" + str(current_page)
         endpoint = url_base + url_suffix
 
         response = requests.get(endpoint, headers=headers, params=params)
@@ -53,10 +51,8 @@ def fetch_events(season):
     current_page = 1
     all_data = []
 
-    url_suffix = "/events"
-
     while True:
-        url_suffix = "/events?page=" + str(current_page)
+        url_suffix = "/events?per_page=250&page=" + str(current_page)
         endpoint = url_base + url_suffix
 
         response = requests.get(endpoint, headers=headers, params=params)
