@@ -188,14 +188,15 @@ def insert_teams(teams, connection):
         )
     connection.commit()
 
-def insert_awards(awards, team, connection):
+def insert_awards(awards, connection):
     data = awards
     cursor = connection.cursor()
     for award in data:
-        cursor.execute(
-            """
-            INSERT OR REPLACE INTO awards (award_id, award_team, award_name, award_event)
-            VALUES (?, ?, ?, ?)
-            """, (award["id"], team, award["title"], award["event"]["id"])
-        )
+        for winner in award["teamWinners"]:
+            cursor.execute(
+                """
+                INSERT OR REPLACE INTO awards (award_id, award_team, award_name, award_event)
+                VALUES (?, ?, ?, ?)
+                """, (award["id"], winner["team"]["id"], award["title"], award["event"]["id"])
+            )
     connection.commit()
