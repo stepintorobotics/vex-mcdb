@@ -69,13 +69,12 @@ def refresh_matches_id(id):
     connection = mc_database.connect("indev.db")
     # Select event from events table
     cursor = connection.cursor()
-    cursor.execute("SELECT event_id, event_divisions FROM events WHERE event_id = ?", (id,))
-    events = cursor.fetchone()
+    cursor.execute("SELECT event_divisions FROM events WHERE event_id = ?", (id,))
+    num_divisions = cursor.fetchone()[0]
     # Fetch and insert matches from selected event
-    for event, num_divisions in events:
-        for division in range(1, num_divisions + 1):
-            matches = re_fetch.fetch_data(f"events/{event}/divisions/{division}/matches", {})
-            mc_database.insert_matches(matches, connection)
+    for division in range(1, num_divisions + 1):
+        matches = re_fetch.fetch_data(f"events/{id}/divisions/{division}/matches", {})
+        mc_database.insert_matches(matches, connection)
     connection.close()
     return "OK"
 
@@ -87,6 +86,11 @@ def notes_id(id):
     cursor.execute("SELECT note_data FROM notes WHERE note_team = ?", (id,))
     notes = cursor.fetchall()
     return jsonify(notes)
+
+# Return full statistics for one team
+@app.route("/stats/<int:event>/<int:team>")
+def stats_vrc(event, team):
+    pass
 
 if __name__ == "__main__":
     connection = mc_database.connect("indev.db")
