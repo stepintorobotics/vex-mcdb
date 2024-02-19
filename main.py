@@ -63,6 +63,23 @@ def refresh_matches():
     connection.close()
     return "OK"
 
+# Refreshes match data from event specified by ID
+@app.route("/refresh/events/<int:id>/matches")
+def refresh_matches_id(id):
+    connection = mc_database.connect("indev.db")
+    # Select event from events table
+    cursor = connection.cursor()
+    cursor.execute("SELECT event_id, event_divisions FROM events WHERE event_id = ?", (id,))
+    events = cursor.fetchone()
+    # Fetch and insert matches from selected event
+    for event, num_divisions in events:
+        for division in range(1, num_divisions + 1):
+            matches = re_fetch.fetch_data(f"events/{event}/divisions/{division}/matches", {})
+            mc_database.insert_matches(matches, connection)
+    connection.close()
+    return "OK"
+
+
 if __name__ == "__main__":
     connection = mc_database.connect("indev.db")
     # Initialise database if it does not already exist
