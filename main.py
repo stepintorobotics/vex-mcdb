@@ -64,7 +64,7 @@ def refresh_matches():
     return "OK"
 
 # Refreshes match data from event specified by ID
-@app.route("/refresh/events/<int:id>/matches")
+@app.route("/refresh/events/id/<int:id>/matches")
 def refresh_matches_id(id):
     connection = mc_database.connect("indev.db")
     # Select event from events table
@@ -79,6 +79,14 @@ def refresh_matches_id(id):
     connection.close()
     return "OK"
 
+# Return notes for team specified by ID
+@app.route("/notes/id/<int:id>")
+def notes_id(id):
+    connection = mc_database.connect("indev.db")
+    cursor = connection.cursor()
+    cursor.execute("SELECT note_data FROM notes WHERE note_team = ?", (id,))
+    notes = cursor.fetchall()
+    return jsonify(notes)
 
 if __name__ == "__main__":
     connection = mc_database.connect("indev.db")
