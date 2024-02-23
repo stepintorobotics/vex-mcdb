@@ -1,8 +1,10 @@
 from flask import Flask, jsonify
+from flask_cors import CORS
 import re_fetch
 import mc_database
 
 app = Flask(__name__)
+CORS(app)
 connection = None
 
 # Index
