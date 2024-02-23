@@ -75,6 +75,7 @@ def database_init(connection):
             match_division INTEGER,
             match_name STRING,
             match_number INTEGER,
+            match_instance INTEGER,
             match_round INTEGER,
             match_season INTEGER,
             match_red_team1 INTEGER NULL,
@@ -234,9 +235,9 @@ def insert_matches(matches, connection):
         # Insert into database
         cursor.execute(
             """
-            INSERT OR REPLACE INTO matches (match_id, match_event, match_division, match_name, match_number, match_round, match_season, match_red_team1, match_red_team2, match_blue_team1, match_blue_team2, match_red_score, match_blue_score)
+            INSERT OR REPLACE INTO matches (match_id, match_event, match_division, match_name, match_number, match_instance, match_round, match_season, match_red_team1, match_red_team2, match_blue_team1, match_blue_team2, match_red_score, match_blue_score)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, (match["id"], event, match["division"]["id"], match["name"], match["matchnum"], match["round"], season, red1, red2, blue1, blue2, match["alliances"][1]["score"], match["alliances"][0]["score"])
+            """, (match["id"], event, match["division"]["id"], match["name"], match["matchnum"], match["instance"], match["round"], season, red1, red2, blue1, blue2, match["alliances"][1]["score"], match["alliances"][0]["score"])
         )
     connection.commit()
 
