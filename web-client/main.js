@@ -1,0 +1,8 @@
+function fetch_match() {
+    fetch("http://127.0.0.1:5000/stats/52066/111877")
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById("red1_points_total").innerHTML = "<br>Points scored (total): " + data["teams"].red1["points_total"]
+        document.getElementById("red1_points_event").innerHTML = "Points scored (event): " + data["teams"].red1["points_event"]
+    })
+}
