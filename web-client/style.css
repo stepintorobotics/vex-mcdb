@@ -29,6 +29,8 @@ body {
 
 li {
     margin-bottom: 1.2em;
-    text-indent: -3em;
-    list-style-type: none;
+}
+
+.selector {
+    max-width: 5em;
 }
