@@ -477,3 +477,15 @@ def awards(team, cursor):
         WHERE awards.award_team = {team}
         """)
     return cursor.fetchall()
+
+
+# Return the teams in a match
+def match_teams(event, div, match_type, match_inst, match_num, cursor):
+    cursor.execute(
+        f"""
+        SELECT matches.match_red_team1, matches.match_red_team2, matches.match_blue_team1, matches.match_blue_team2, matches.match_name, events.event_name
+        FROM matches
+        INNER JOIN events ON matches.match_event = events.event_id
+        WHERE match_event = {event} AND match_division = {div} AND match_round = {match_type} AND match_instance = {match_inst} AND match_number = {match_num}
+        """)
+    return cursor.fetchall()
