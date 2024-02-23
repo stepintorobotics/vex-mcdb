@@ -194,6 +194,7 @@ def insert_teams(teams, connection):
         )
     connection.commit()
 
+
 def insert_awards(awards, connection):
     data = awards
     cursor = connection.cursor()
@@ -207,6 +208,7 @@ def insert_awards(awards, connection):
                 """, (award["id"], winner["team"]["id"], award["title"], award["event"]["id"])
             )
     connection.commit()
+
 
 def insert_matches(matches, connection):
     data = matches
@@ -237,3 +239,240 @@ def insert_matches(matches, connection):
             """, (match["id"], event, match["division"]["id"], match["name"], match["matchnum"], match["round"], season, red1, red2, blue1, blue2, match["alliances"][1]["score"], match["alliances"][0]["score"])
         )
     connection.commit()
+
+
+# Calculate a team's total points across a season
+def team_total_points(team, cursor):
+    cursor.execute(
+        f"""
+        SELECT SUM(total_points) AS total_score
+        FROM (
+            SELECT
+                CASE
+                    WHEN match_red_team1 = {team} THEN match_red_score
+                    WHEN match_red_team2 = {team} THEN match_red_score
+                    WHEN match_blue_team1 = {team} THEN match_blue_score
+                    WHEN match_blue_team2 = {team} THEN match_blue_score
+                    ELSE 0
+                END AS total_points
+            FROM matches
+        ) AS combined_scores
+        """)
+    return cursor.fetchone()[0]
+
+
+# Calculate a team's points from an event
+def team_event_points(team, event, cursor):
+    cursor.execute(
+        f"""
+        SELECT SUM(total_points) AS total_score
+        FROM (
+            SELECT
+                CASE
+                    WHEN match_red_team1 = {team} THEN match_red_score
+                    WHEN match_red_team2 = {team} THEN match_red_score
+                    WHEN match_blue_team1 = {team} THEN match_blue_score
+                    WHEN match_blue_team2 = {team} THEN match_blue_score
+                    ELSE 0
+                END AS total_points
+            FROM matches
+            WHERE match_event = {event}
+        ) AS combined_scores
+        """)
+    return cursor.fetchone()[0]
+
+
+# Get an event's season
+def event_season(event, cursor):
+    cursor.execute(f"SELECT event_season FROM events WHERE event_id = {event}")
+    return cursor.fetchone()[0]
+
+
+# Get the number of matches a team has played across a season
+def team_matches_total(team, cursor):
+    cursor.execute(
+        f"""
+        SELECT COUNT(*) AS matches_played
+        FROM matches
+        WHERE (match_red_score + match_blue_score) > 0 AND (
+            match_red_team1 = {team} OR 
+            match_red_team2 = {team} OR 
+            match_blue_team1 = {team} OR 
+            match_blue_team2 = {team} 
+        )
+        """)
+    return cursor.fetchone()[0]
+
+
+# Get the number of matches a team has played at an event
+def team_matches_event(team, event, cursor):
+    cursor.execute(
+        f"""
+        SELECT COUNT(*) AS matches_played
+        FROM matches
+        WHERE (match_red_score + match_blue_score) > 0 AND (
+            match_red_team1 = {team} OR 
+            match_red_team2 = {team} OR 
+            match_blue_team1 = {team} OR 
+            match_blue_team2 = {team} 
+        ) AND match_event = {event}
+        """)
+    return cursor.fetchone()[0]
+
+
+# Get the number of matches a team has won across a season
+def team_wins_total(team, cursor):
+    cursor.execute(
+        f"""
+        SELECT COUNT(*) AS matches_won
+        FROM matches
+        WHERE(
+            (match_red_team1 = {team} OR match_red_team2 = {team}) AND match_red_score > match_blue_score
+            OR
+            (match_blue_team1 = {team} OR match_blue_team2 = {team}) AND match_blue_score > match_red_score
+        )""")
+    return cursor.fetchone()[0]
+
+
+# Get the number of matches a team has won at an event
+def team_wins_event(team, event, cursor):
+    cursor.execute(
+        f"""
+        SELECT COUNT(*) AS matches_won
+        FROM matches
+        WHERE(
+            (match_red_team1 = {team} OR match_red_team2 = {team}) AND match_red_score > match_blue_score
+            OR
+            (match_blue_team1 = {team} OR match_blue_team2 = {team}) AND match_blue_score > match_red_score
+        ) AND match_event = {event}""")
+    return cursor.fetchone()[0]
+
+
+# Get a team's high score across a season
+def team_hs_total(team, cursor):
+    cursor.execute(
+        f"""
+        SELECT MAX(total_score) AS highest_score
+        FROM (
+            SELECT 
+                CASE 
+                    WHEN match_red_team1 = {team} THEN match_red_score
+                    WHEN match_red_team2 = {team} THEN match_red_score
+                    WHEN match_blue_team1 = {team} THEN match_blue_score
+                    WHEN match_blue_team2 = {team} THEN match_blue_score
+                END AS total_score
+            FROM matches
+        ) AS scores; 
+        """)
+    return cursor.fetchone()[0]
+
+
+# Get the match in which the team's season high score was achieved
+def team_hs_total_match(team, score, cursor):
+    cursor.execute(
+        f"""
+        SELECT matches.match_name, events.event_name
+        FROM matches
+        INNER JOIN events ON matches.match_event = events.event_id
+        WHERE (
+            match_red_team1 = {team} OR 
+            match_red_team2 = {team} OR 
+            match_blue_team1 = {team} OR 
+            match_blue_team2 = {team}
+        ) AND (
+            CASE 
+                WHEN match_red_team1 = {team} OR match_red_team2 = {team} THEN match_red_score
+                ELSE match_blue_score
+            END) = {score}
+        """)
+    return cursor.fetchone()
+
+
+# Get a team's high score from an event
+def team_hs_event(team, event, cursor):
+    cursor.execute(
+        f"""
+        SELECT MAX(total_score) AS highest_score
+        FROM (
+            SELECT 
+                CASE 
+                    WHEN match_red_team1 = {team} THEN match_red_score
+                    WHEN match_red_team2 = {team} THEN match_red_score
+                    WHEN match_blue_team1 = {team} THEN match_blue_score
+                    WHEN match_blue_team2 = {team} THEN match_blue_score
+                END AS total_score
+            FROM matches
+            WHERE match_event = {event}
+        ) AS scores; 
+        """)
+    return cursor.fetchone()[0]
+
+
+# Get the match in which the team's event high score was achieved
+def team_hs_event_match(team, event, score, cursor):
+    cursor.execute(
+        f"""
+        SELECT match_name
+        FROM matches
+        INNER JOIN events ON matches.match_event = events.event_id
+        WHERE (
+            match_red_team1 = {team} OR 
+            match_red_team2 = {team} OR 
+            match_blue_team1 = {team} OR 
+            match_blue_team2 = {team}
+        ) AND (
+            CASE 
+                WHEN match_red_team1 = {team} OR match_red_team2 = {team} THEN match_red_score
+                ELSE match_blue_score
+            END) = {score}
+        AND match_event = {event}
+        """)
+    return cursor.fetchone()[0]
+
+
+# Return a team's name by ID
+def team_name(team, cursor):
+    cursor.execute(f"SELECT team_name FROM teams WHERE team_id = {team}")
+    return cursor.fetchone()[0]
+
+
+# Return a team's number by ID
+def team_number(team, cursor):
+    cursor.execute(f"SELECT team_number FROM teams WHERE team_id = {team}")
+    return cursor.fetchone()[0]
+
+
+# Return a team's grade by ID
+def team_grade(team, cursor):
+    cursor.execute(f"SELECT team_grade FROM teams WHERE team_id = {team}")
+    return cursor.fetchone()[0]
+
+
+# Return a team's organisation by ID
+def team_organisation(team, cursor):
+    cursor.execute(f"SELECT team_organisation FROM teams WHERE team_id = {team}")
+    return cursor.fetchone()[0]
+
+
+# Return a team's city by ID
+def team_city(team, cursor):
+    cursor.execute(f"SELECT team_city FROM teams WHERE team_id = {team}")
+    return cursor.fetchone()[0]
+
+
+# Return a team's robot name
+def team_robot(team, cursor):
+    cursor.execute(f"SELECT team_robot FROM teams WHERE team_id = {team}")
+    return cursor.fetchone()[0]
+
+
+# Return a team's awards
+def awards(team, cursor):
+    cursor.execute(
+        f"""
+        SELECT awards.award_name, events.event_name
+        FROM awards
+        INNER JOIN events ON awards.award_event = events.event_id
+        WHERE awards.award_team = {team}
+        """)
+    return cursor.fetchall()

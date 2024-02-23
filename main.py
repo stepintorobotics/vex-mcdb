@@ -93,52 +93,36 @@ def notes_id(id):
 @app.route("/stats/<int:event>/<int:team>")
 def stats(event, team):
     connection = mc_database.connect("indev.db")
-    cursor = connection.cursor()
-    cursor.execute(f"SELECT event_season FROM events WHERE event_id = {event}")
-    event_season = cursor.fetchone()
-    cursor.execute(
-        f"""
-        SELECT SUM(total_points) AS total_score
-        FROM (
-            SELECT
-                CASE
-                    WHEN match_red_team1 = {team} THEN match_red_score
-                    WHEN match_red_team2 = {team} THEN match_red_score
-                    WHEN match_blue_team1 = {team} THEN match_blue_score
-                    WHEN match_blue_team2 = {team} THEN match_blue_score
-                    ELSE 0
-                END AS total_points
-            FROM matches
-        ) AS combined_scores
-        """)
-    total_points = cursor.fetchone()
-    cursor.execute(
-        f"""
-        SELECT SUM(total_points) AS total_score
-        FROM (
-            SELECT
-                CASE
-                    WHEN match_red_team1 = {team} THEN match_red_score
-                    WHEN match_red_team2 = {team} THEN match_red_score
-                    WHEN match_blue_team1 = {team} THEN match_blue_score
-                    WHEN match_blue_team2 = {team} THEN match_blue_score
-                    ELSE 0
-                END AS total_points
-            FROM matches
-            WHERE match_event = {event}
-        ) AS combined_scores
-        """)
-    event_points = cursor.fetchall()
-    connection.close()
+    cursor = connection.cursor() 
     response = {
-        "season": event_season[0],
+        "season": mc_database.event_season(event, cursor),
         "teams": {
             "red1": {
-                "points_total": total_points[0],
-                "points_event": event_points[0][0]
+                "team_name": mc_database.team_name(team, cursor),
+                "team_number": mc_database.team_number(team, cursor),
+                "team_robot": mc_database.team_robot(team, cursor),
+                "team_grade": mc_database.team_grade(team, cursor),
+                "team_organisation": mc_database.team_organisation(team, cursor),
+                "team_city": mc_database.team_city(team, cursor),
+                "points_total": mc_database.team_total_points(team, cursor),
+                "points_event": mc_database.team_event_points(team, event, cursor),
+                "points_avg_total": int(mc_database.team_total_points(team, cursor) / mc_database.team_matches_total(team, cursor)),
+                "points_avg_event": int(mc_database.team_event_points(team, event, cursor) / mc_database.team_matches_event(team, event, cursor)),
+                "matches_total": mc_database.team_matches_total(team, cursor),
+                "matches_event": mc_database.team_matches_event(team, event, cursor),
+                "wins_total": mc_database.team_wins_total(team, cursor),
+                "wins_event": mc_database.team_wins_event(team, event, cursor),
+                "wins_pct_total": int((mc_database.team_wins_total(team, cursor) / mc_database.team_matches_total(team, cursor)) * 100),
+                "wins_pct_event": int((mc_database.team_wins_event(team, event, cursor) / mc_database.team_matches_event(team, event, cursor)) * 100),
+                "team_hs_total": mc_database.team_hs_total(team, cursor),
+                "team_hs_event": mc_database.team_hs_event(team, event, cursor),
+                "team_hs_total_match": mc_database.team_hs_total_match(team, mc_database.team_hs_total(team, cursor), cursor),
+                "team_hs_event_match": mc_database.team_hs_event_match(team, event, mc_database.team_hs_event(team, event, cursor), cursor),
+                "awards": mc_database.awards(team, cursor)
             }
         }
     }
+    connection.close()
     return jsonify(response)
 
 if __name__ == "__main__":
