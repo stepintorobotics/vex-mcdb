@@ -89,8 +89,55 @@ def notes_id(id):
 
 # Return full statistics for one team
 @app.route("/stats/<int:event>/<int:team>")
-def stats_vrc(event, team):
-    pass
+def stats(event, team):
+    connection = mc_database.connect("indev.db")
+    cursor = connection.cursor()
+    cursor.execute(f"SELECT event_season FROM events WHERE event_id = {event}")
+    event_season = cursor.fetchone()
+    cursor.execute(
+        f"""
+        SELECT SUM(total_points) AS total_score
+        FROM (
+            SELECT
+                CASE
+                    WHEN match_red_team1 = {team} THEN match_red_score
+                    WHEN match_red_team2 = {team} THEN match_red_score
+                    WHEN match_blue_team1 = {team} THEN match_blue_score
+                    WHEN match_blue_team2 = {team} THEN match_blue_score
+                    ELSE 0
+                END AS total_points
+            FROM matches
+        ) AS combined_scores
+        """)
+    total_points = cursor.fetchone()
+    cursor.execute(
+        f"""
+        SELECT SUM(total_points) AS total_score
+        FROM (
+            SELECT
+                CASE
+                    WHEN match_red_team1 = {team} THEN match_red_score
+                    WHEN match_red_team2 = {team} THEN match_red_score
+                    WHEN match_blue_team1 = {team} THEN match_blue_score
+                    WHEN match_blue_team2 = {team} THEN match_blue_score
+                    ELSE 0
+                END AS total_points
+            FROM matches
+            WHERE match_event = {event}
+        ) AS combined_scores
+        """)
+    event_points = cursor.fetchall()
+    connection.close()
+    response = {
+        "season": event_season[0],
+        "teams": {
+            "red1": {
+                "points_total": total_points[0],
+                "points_event": event_points[0][0]
+            }
+        }
+    }
+    return jsonify(response)
 
 if __name__ == "__main__":
     connection = mc_database.connect("indev.db")
