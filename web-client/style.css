@@ -22,3 +22,7 @@ body {
 #blue1_number, #blue1_name, #blue2_number, #blue2_name, #iq1_number, #iq1_name, #iq2_number, #iq2_name {
     color: #5cadff;
 }
+
+.hidden {
+    display: none;
+}
