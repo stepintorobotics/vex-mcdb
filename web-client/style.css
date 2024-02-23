@@ -1,0 +1,24 @@
+* {
+    font-family: monospace !important;
+    font-size: 1em;
+    margin: 0;
+    hyphens: auto;
+}
+  
+#main {
+    max-width: 352px;
+    margin: 0.5em auto;
+}
+
+body {
+    background-color: black;
+    color: white;
+}
+
+#red1_number, #red1_name, #red2_number, #red2_name {
+    color: #ff5c5c;
+}
+
+#blue1_number, #blue1_name, #blue2_number, #blue2_name, #iq1_number, #iq1_name, #iq2_number, #iq2_name {
+    color: #5cadff;
+}
