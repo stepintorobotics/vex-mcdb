@@ -236,7 +236,7 @@ def insert_matches(matches, connection):
         cursor.execute(
             """
             INSERT OR REPLACE INTO matches (match_id, match_event, match_division, match_name, match_number, match_instance, match_round, match_season, match_red_team1, match_red_team2, match_blue_team1, match_blue_team2, match_red_score, match_blue_score)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (match["id"], event, match["division"]["id"], match["name"], match["matchnum"], match["instance"], match["round"], season, red1, red2, blue1, blue2, match["alliances"][1]["score"], match["alliances"][0]["score"])
         )
     connection.commit()
