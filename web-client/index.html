@@ -10,8 +10,21 @@
         <div id="main">
             <p id="app_name"><b>MCDb FOR VEX</b></p>
             <p id="event_name">EVENT NAME</p>
-            <p id="divisions_name"><br><b>DIVISION NAME</b></p>
-            <p id="match_name">MATCH NAME</p>
+
+            <select id="selected_type">
+                <option value="1">Prac</option>
+                <option value="2">Qual</option>
+                <option value="6">R16</option> 
+                <option value="3">QF</option> 
+                <option value="4">SF</option> 
+                <option value="5">Final</option> 
+            </select>
+            <input type="number" class="selector" id="selected_div" placeholder="Div.">
+            <input type="number" class="selector" id="selected_inst" placeholder="Inst.">
+            <input type="number" class="selector" id="selected_num" placeholder="Num.">
+            <button id="refresh">Refresh</button>
+
+            <p id="match_name"><br><b>MATCH NAME</b></p>
             <div id="teams">
                 <div id="vrc">
                     <p id="red1_number"><br><br><b>0000A</b></p>
@@ -58,7 +71,7 @@
                     <p id="red2_hs_total_event">Event</p>
                     <p id="red2_hs_event_score"><br>High score (event): 0</p>
                     <p id="red2_hs_event_match">Match</p>
-                    <p id="red2_awards"></p>
+                    <ul id="red2_awards"></ul>
 
                     <p id="blue1_number"><br><br><b>0000A</b></p>
                     <p id="blue1_name">TEAM 1</p>
@@ -81,7 +94,7 @@
                     <p id="blue1_hs_total_event">Event</p>
                     <p id="blue1_hs_event_score"><br>High score (event): 0</p>
                     <p id="blue1_hs_event_match">Match</p>
-                    <p id="blue1_awards"></p>
+                    <ul id="blue1_awards"></ul>
 
                     <p id="blue2_number"><br><br><b>0000A</b></p>
                     <p id="blue2_name">TEAM 1</p>
@@ -104,7 +117,7 @@
                     <p id="blue2_hs_total_event">Event</p>
                     <p id="blue2_hs_event_score"><br>High score (event): 0</p>
                     <p id="blue2_hs_event_match">Match</p>
-                    <p id="blue2_awards"></p>
+                    <ul id="blue2_awards"></ul>
                 </div>
                 <div id="viqc">
                     <p id="iq1_number"><br><br><b>0000E</b></p>
@@ -119,6 +132,6 @@
             </div>
         </div>
 
-        <script src="main.js"></script>
+        <script src="main.js" defer></script>
     </body>
 </html>
