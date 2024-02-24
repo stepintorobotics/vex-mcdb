@@ -12,17 +12,21 @@
             <p id="app_name"><b>MCDb FOR VEX</b></p>
             <p id="event_name">EVENT NAME</p>
 
+            <p><br>Match type:</p>
             <select id="selected_type">
-                <option value="1">Prac</option>
-                <option value="2">Qual</option>
-                <option value="6">R16</option> 
-                <option value="3">QF</option> 
-                <option value="4">SF</option> 
-                <option value="5">Final</option> 
+                <option value="1">1. Practice</option>
+                <option value="2">2. Qualification</option>
+                <option value="3">3. Quarter Final</option>
+                <option value="4">4. Semi Final</option>
+                <option value="5">5. Final</option>
+                <option value="6">6. Round of 16</option>
             </select>
-            <input type="number" class="selector" id="selected_div" placeholder="Div.">
-            <input type="number" class="selector" id="selected_inst" placeholder="Inst.">
-            <input type="number" class="selector" id="selected_num" placeholder="Num.">
+            <p>Division:</p>
+            <input type="number" class="selector" id="selected_div">
+            <p>Instance (ie. 4 in QF 4-1):</p>
+            <input type="number" class="selector" id="selected_inst">
+            <p>Number:</p>
+            <input type="number" class="selector" id="selected_num">
             <button id="refresh">Refresh</button>
 
             <p id="match_name"><br><b>MATCH NAME</b></p>
