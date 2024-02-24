@@ -1,0 +1,7 @@
+sqlite3
+flask
+flask-cors
+requests
+os
+time
+dotenv
