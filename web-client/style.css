@@ -1,6 +1,6 @@
 * {
     font-family: monospace !important;
-    font-size: 1em;
+    font-size: 1.06em;
     margin: 0;
     hyphens: auto;
 }
@@ -8,10 +8,11 @@
 #main {
     max-width: 352px;
     margin: 0.5em auto;
+    background-color: black;
 }
 
 body {
-    background-color: black;
+    background-color: #333;
     color: white;
 }
 
