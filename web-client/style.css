@@ -30,8 +30,10 @@ body {
 
 li {
     margin-bottom: 1.2em;
+    font-size: 1em;
 }
 
 .selector {
-    max-width: 5em;
+    max-width: 100%;
+    display: block;
 }
