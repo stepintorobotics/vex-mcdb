@@ -243,4 +243,4 @@ if __name__ == "__main__":
     # Initialise database if it does not already exist
     mc_database.program_init(connection)
     connection.close()
-    app.run(debug=True)
+    app.run(host="0.0.0.0", debug=True)
