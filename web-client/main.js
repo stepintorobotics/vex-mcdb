@@ -1,7 +1,7 @@
 let award, awards, award_item, award_list, award_name, award_event;
 let target_div, target_inst, target_num, target_type, endpoint;
 let target_event = 52066;
-let url_base = "http://192.0.0.38:5000/"
+let url_base = "http://142.93.46.118:5000/"
 
 function fetch_match(team1, team2, team3, team4, event_name, match_name) {
     fetch(url_base + "stats/" + target_event + "/" + team1 + "/" + team2 + "/" + team3 + "/" + team4)
