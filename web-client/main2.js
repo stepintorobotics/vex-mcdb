@@ -1,18 +1,20 @@
 let award, awards, award_item, award_list, award_name, award_event;
 let target_div, target_inst, target_num, target_type, endpoint;
 let target_event = 52066;
-let url_base = "http://142.93.46.118:5000/"
+let awards_exc, awards_tc, awards_skills;
+let manual1, manual2, manual3, manual4;
+let url_base = "http://127.0.0.1:5000/"
 
-function fetch_match(team1, team2, team3, team4, event_name, match_name) {
+function fetch_match(team1, team2, team3, team4) {
     fetch(url_base + "stats/" + target_event + "/" + team1 + "/" + team2 + "/" + team3 + "/" + team4)
     .then(response => response.json())
     .then(data => {
         // If VRC, hide VIQC teams and vice versa
-        //if (data["season"] == 181) {
-        //    document.getElementById("viqc").classList.add("hidden");
-        //} else {
-        //    document.getElementById("vrc").classList.add("hidden");
-        //}
+        if (data["season"] == 181) {
+            document.getElementById("iq").classList.add("hidden");
+        } else {
+            document.getElementById("vrc").classList.add("hidden");
+        }
 
         // Insert match information
         //document.getElementById("event_name").innerHTML = event_name;
@@ -42,11 +44,24 @@ function fetch_match(team1, team2, team3, team4, event_name, match_name) {
         awards = data["teams"].red1["awards"];
         award_list = document.getElementById("red1_awards");
         award_list.innerHTML = "<br>";
+        awards_exc = 0;
+        awards_tc = 0;
+        awards_skills = 0;
         for (award of awards) {
             award_item = document.createElement("div");
             award_item.innerHTML = "<span class='award_title'>" + award[0] + "</span><span class='award_event'>" + award[1] + "</span>";
             award_list.appendChild(award_item);
+            if (award[0] == "Excellence Award (VRC/VEXU/VAIRC)" || award[0] == "Excellence Award - High School (VRC/VAIRC)" || award[0] == "Excellence Award - Middle School (VRC/VAIRC)") {
+                awards_exc += 1;
+            } else if (award[0] == "Tournament Champions (VRC/VEXU/VAIRC)") {
+                awards_tc += 1;
+            } else if (award[0] == "Robot Skills Champion (VRC/VEXU/VAIRC)") {
+                awards_skills += 1;
+            }
         }
+        document.getElementById("red1_awards_exc").innerHTML = awards_exc;
+        document.getElementById("red1_awards_tc").innerHTML = awards_tc;
+        document.getElementById("red1_awards_skills").innerHTML = awards_skills;
 
         document.getElementById("red2_number").innerHTML = data["teams"].red2["team_number"];
         document.getElementById("red2_name").innerHTML = data["teams"].red2["team_name"];
@@ -71,11 +86,24 @@ function fetch_match(team1, team2, team3, team4, event_name, match_name) {
         awards = data["teams"].red2["awards"];
         award_list = document.getElementById("red2_awards");
         award_list.innerHTML = "<br>";
+        awards_exc = 0;
+        awards_tc = 0;
+        awards_skills = 0;
         for (award of awards) {
             award_item = document.createElement("div");
             award_item.innerHTML = "<span class='award_title'>" + award[0] + "</span><span class='award_event'>" + award[1] + "</span>";
             award_list.appendChild(award_item);
+            if (award[0] == "Excellence Award (VRC/VEXU/VAIRC)" || award[0] == "Excellence Award - High School (VRC/VAIRC)" || award[0] == "Excellence Award - Middle School (VRC/VAIRC)") {
+                awards_exc += 1;
+            } else if (award[0] == "Tournament Champions (VRC/VEXU/VAIRC)") {
+                awards_tc += 1;
+            } else if (award[0] == "Robot Skills Champion (VRC/VEXU/VAIRC)") {
+                awards_skills += 1;
+            }
         }
+        document.getElementById("red2_awards_exc").innerHTML = awards_exc;
+        document.getElementById("red2_awards_tc").innerHTML = awards_tc;
+        document.getElementById("red2_awards_skills").innerHTML = awards_skills;
 
         document.getElementById("blue1_number").innerHTML = data["teams"].blue1["team_number"];
         document.getElementById("blue1_name").innerHTML = data["teams"].blue1["team_name"];
@@ -100,11 +128,24 @@ function fetch_match(team1, team2, team3, team4, event_name, match_name) {
         awards = data["teams"].blue1["awards"];
         award_list = document.getElementById("blue1_awards");
         award_list.innerHTML = "<br>";
+        awards_exc = 0;
+        awards_tc = 0;
+        awards_skills = 0;
         for (award of awards) {
             award_item = document.createElement("div");
             award_item.innerHTML = "<span class='award_title'>" + award[0] + "</span><span class='award_event'>" + award[1] + "</span>";
             award_list.appendChild(award_item);
+            if (award[0] == "Excellence Award (VRC/VEXU/VAIRC)" || award[0] == "Excellence Award - High School (VRC/VAIRC)" || award[0] == "Excellence Award - Middle School (VRC/VAIRC)") {
+                awards_exc += 1;
+            } else if (award[0] == "Tournament Champions (VRC/VEXU/VAIRC)") {
+                awards_tc += 1;
+            } else if (award[0] == "Robot Skills Champion (VRC/VEXU/VAIRC)") {
+                awards_skills += 1;
+            }
         }
+        document.getElementById("blue1_awards_exc").innerHTML = awards_exc;
+        document.getElementById("blue1_awards_tc").innerHTML = awards_tc;
+        document.getElementById("blue1_awards_skills").innerHTML = awards_skills;
 
         document.getElementById("blue2_number").innerHTML = data["teams"].blue2["team_number"];
         document.getElementById("blue2_name").innerHTML = data["teams"].blue2["team_name"];
@@ -129,11 +170,24 @@ function fetch_match(team1, team2, team3, team4, event_name, match_name) {
         awards = data["teams"].blue2["awards"];
         award_list = document.getElementById("blue2_awards");
         award_list.innerHTML = "<br>";
+        awards_exc = 0;
+        awards_tc = 0;
+        awards_skills = 0;
         for (award of awards) {
             award_item = document.createElement("div");
             award_item.innerHTML = "<span class='award_title'>" + award[0] + "</span><span class='award_event'>" + award[1] + "</span>";
             award_list.appendChild(award_item);
+            if (award[0] == "Excellence Award (VRC/VEXU/VAIRC)" || award[0] == "Excellence Award - High School (VRC/VAIRC)" || award[0] == "Excellence Award - Middle School (VRC/VAIRC)") {
+                awards_exc += 1;
+            } else if (award[0] == "Tournament Champions (VRC/VEXU/VAIRC)") {
+                awards_tc += 1;
+            } else if (award[0] == "Robot Skills Champion (VRC/VEXU/VAIRC)") {
+                awards_skills += 1;
+            }
         }
+        document.getElementById("blue2_awards_exc").innerHTML = awards_exc;
+        document.getElementById("blue2_awards_tc").innerHTML = awards_tc;
+        document.getElementById("blue2_awards_skills").innerHTML = awards_skills;
     })
 }
 
@@ -147,5 +201,22 @@ document.getElementById("refresh").addEventListener("click", function(){
     .then(response => response.json())
     .then(data => {
         fetch_match(data[0][0], data[0][1], data[0][2], data[0][3], data[0][5], data[0][4]);
+    })
+});
+
+document.getElementById("manual_refresh").addEventListener("click", function(){
+    manual1 = String(document.getElementById("manual1").value);
+    manual2 = String(document.getElementById("manual2").value);
+    manual3 = String(document.getElementById("manual3").value);
+    manual4 = String(document.getElementById("manual4").value);
+    if (manual2 == "" || manual4 == "") {
+        manual2 = manual1;
+        manual4 = manual3;
+    }
+    endpoint = url_base + "teams/" + manual1 + "/" + manual2 + "/" + manual3 + "/" + manual4;
+    fetch(endpoint)
+    .then(response => response.json())
+    .then(data => {
+        fetch_match(data[1], data[2], data[3], data[4]);
     })
 });
