@@ -121,7 +121,7 @@ body {
     font-weight: 400;
 }
 
-#red1, #red2, #blue1, #blue2 {
+#red1, #red2, #blue1, #blue2, #iq1, #iq2 {
     border-top: #fff 0.075em solid;
     padding: 1em 0 1em 0;
 }
@@ -133,32 +133,32 @@ body {
     color: #ff5c5c;
 }
 
-#blue1_number, #blue2_number {
+#blue1_number, #blue2_number, #iq1_number, #iq2_number {
     margin: 0;
     font-size: 2.5em;
     font-weight: 800;
     color: #5cadff;
 }
 
-#red1_name, #red2_name, #blue1_name, #blue2_name {
+#red1_name, #red2_name, #blue1_name, #blue2_name, #iq1_name, #iq2_name {
     margin: 0.6em 0 0.6em 0;
     font-weight: 400;
     font-size: 1.5em;
 }
 
-#red1_grade, #red2_grade, #blue1_grade, #blue2_grade {
+#red1_grade, #red2_grade, #blue1_grade, #blue2_grade, #iq1_grade, #iq2_grade {
     margin: -0.2em 0 1em 0;
     font-size: 0.75em;
     font-weight: 600;
 }
 
-#red1_organisation, #red2_organisation, #blue1_organisation, #blue2_organisation {
+#red1_organisation, #red2_organisation, #blue1_organisation, #blue2_organisation, #iq1_organisation, #iq2_organisation {
     margin: 0;
     font-size: 0.75em;
     font-weight: 600;
 }
 
-#red1_city, #red2_city, #blue1_city, #blue2_city {
+#red1_city, #red2_city, #blue1_city, #blue2_city, #iq1_city, #iq2_city {
     margin-top: 0.1em;
     font-size: 0.75em;
     font-weight: 400;
@@ -213,6 +213,10 @@ body {
 
 .event {
     border-right: #ff5cf7 0.075em solid;
+}
+
+.award {
+    border-right: #ffce5c 0.075em solid;
 }
 
 .award_title, .award_event {
@@ -273,6 +277,14 @@ body {
     margin-top: 0.5em;
 }
 
+.s-red {
+    border-bottom: #ff5c5c 0.15em solid;
+}
+
+.s-blue {
+    border-bottom: #5cadff 0.15em solid;
+}
+
 .selection {
     display: flex;
     justify-content: space-between;
@@ -284,7 +296,7 @@ body {
     margin: 0.6em 0 0 0;
 }
 
-#refresh {
+#refresh, #manual_refresh {
     width: 100%;
     background-color: #000;
     color: #fff;
@@ -296,6 +308,16 @@ body {
     margin: 0.5em 0 1em 0;
 }
 
-#refresh:hover {
+#refresh:hover, #manual_refresh:hover {
     color: #ff5c5c;
+}
+
+.hidden {
+    display: none;
+}
+
+#manual_select {
+    border-top: #fff 0.075em solid;
+    margin: 0.6em 0 0 0;
+    padding: 1em 0 1em 0;
 }
