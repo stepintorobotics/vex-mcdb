@@ -489,3 +489,15 @@ def match_teams(event, div, match_type, match_inst, match_num, cursor):
         WHERE match_event = {event} AND match_division = {div} AND match_round = {match_type} AND match_instance = {match_inst} AND match_number = {match_num}
         """)
     return cursor.fetchall()
+
+
+# Return the team IDs from numbers
+def team_ids(team, cursor):
+    cursor.execute(
+        f"""
+        SELECT team_id
+        FROM teams
+        WHERE team_number = "{team}"
+        """
+    )
+    return cursor.fetchone()[0]
