@@ -15,7 +15,7 @@ def index():
 # Refreshes all event data (excl. matches, awards) in the UK
 @app.route("/refresh/events")
 def refresh_events():
-    connection = mc_database.connect("/tmp/indev.db")
+    connection = mc_database.connect("indev.db")
     # Fetch data
     events = re_fetch.fetch_data("events", {"region": "United Kingdom", "season[]": [180, 181]})
     # Insert data into database
@@ -26,7 +26,7 @@ def refresh_events():
 # Refreshes all team data (excl. matches, awards) in the UK
 @app.route("/refresh/teams")
 def refresh_teams():
-    connection = mc_database.connect("/tmp/indev.db")
+    connection = mc_database.connect("indev.db")
     # Fetch data
     teams = re_fetch.fetch_data("teams", {"country": "GB", "program[]": [1, 41], "registered": True})
     # Insert data into database
@@ -37,7 +37,7 @@ def refresh_teams():
 # Refreshes award data from all stored events
 @app.route("/refresh/events/awards")
 def refresh_awards():
-    connection = mc_database.connect("/tmp/indev.db")
+    connection = mc_database.connect("indev.db")
     # Retrieve list of known events
     cursor = connection.cursor()
     cursor.execute("SELECT event_id FROM events")
@@ -52,7 +52,7 @@ def refresh_awards():
 # Refreshes match data from all stored events
 @app.route("/refresh/events/matches")
 def refresh_matches():
-    connection = mc_database.connect("/tmp/indev.db")
+    connection = mc_database.connect("indev.db")
     # Retrieve list of known events
     cursor = connection.cursor()
     cursor.execute("SELECT event_id, event_divisions FROM events")
@@ -68,7 +68,7 @@ def refresh_matches():
 # Refreshes match data from event specified by ID
 @app.route("/refresh/events/id/<int:id>/matches")
 def refresh_matches_id(id):
-    connection = mc_database.connect("/tmp/indev.db")
+    connection = mc_database.connect("indev.db")
     # Select event from events table
     cursor = connection.cursor()
     cursor.execute("SELECT event_divisions FROM events WHERE event_id = ?", (id,))
@@ -83,24 +83,39 @@ def refresh_matches_id(id):
 # Return notes for team specified by ID
 @app.route("/notes/id/<int:id>")
 def notes_id(id):
-    connection = mc_database.connect("/tmp/indev.db")
+    connection = mc_database.connect("indev.db")
     cursor = connection.cursor()
     cursor.execute("SELECT note_data FROM notes WHERE note_team = ?", (id,))
     notes = cursor.fetchall()
     return jsonify(notes)
 
+# Return team IDs from team numbers
+@app.route("/teams/<string:team1>/<string:team2>/<string:team3>/<string:team4>")
+def team_ids(team1, team2, team3, team4):
+    connection = mc_database.connect("indev.db")
+    cursor = connection.cursor()
+    response = {
+        1: mc_database.team_ids(team1, cursor),
+        2: mc_database.team_ids(team2, cursor),
+        3: mc_database.team_ids(team3, cursor),
+        4: mc_database.team_ids(team4, cursor)
+    }
+    connection.close()
+    return jsonify(response)
+
 # Return teams IDs for a match
 @app.route("/match/<int:event>/<int:div>/<int:match_type>/<int:match_inst>/<int:match_num>")
 def match_teams(event, div, match_type, match_inst, match_num):
-    connection = mc_database.connect("/tmp/indev.db")
+    connection = mc_database.connect("indev.db")
     cursor = connection.cursor()
     response = mc_database.match_teams(event, div, match_type, match_inst, match_num, cursor)
+    connection.close()
     return jsonify(response)
 
 # Return full statistics for one team
 @app.route("/stats/<int:event>/<int:team>")
 def stats_single(event, team):
-    connection = mc_database.connect("/tmp/indev.db")
+    connection = mc_database.connect("indev.db")
     cursor = connection.cursor() 
     response = {
         "season": mc_database.event_season(event, cursor),
@@ -136,7 +151,7 @@ def stats_single(event, team):
 # Return full statistics for four teams (typical VRC match)
 @app.route("/stats/<int:event>/<int:team1>/<int:team2>/<int:team3>/<int:team4>")
 def stats_vrc(event, team1, team2, team3, team4):
-    connection = mc_database.connect("/tmp/indev.db")
+    connection = mc_database.connect("indev.db")
     cursor = connection.cursor() 
     response = {
         "season": mc_database.event_season(event, cursor),
@@ -238,8 +253,14 @@ def stats_vrc(event, team1, team2, team3, team4):
     connection.close()
     return jsonify(response)
 
+# Return full statistics for two teams (typical IQ match)
+@app.route("/stats/<int:event>/<int:team1>/<int:team2>")
+def stats_iq(event, team1, team2):
+    connection = mc_database.connect("indev.db")
+    connection.close()
+
 if __name__ == "__main__":
-    connection = mc_database.connect("/tmp/indev.db")
+    connection = mc_database.connect("indev.db")
     # Initialise database if it does not already exist
     mc_database.program_init(connection)
     connection.close()
