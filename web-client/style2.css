@@ -296,7 +296,7 @@ body {
     margin: 0.6em 0 0 0;
 }
 
-#refresh, #manual_refresh {
+#refresh, #manual_refresh, #db_refresh {
     width: 100%;
     background-color: #000;
     color: #fff;
@@ -308,7 +308,7 @@ body {
     margin: 0.5em 0 1em 0;
 }
 
-#refresh:hover, #manual_refresh:hover {
+#refresh:hover, #manual_refresh:hover, #db_refresh:hover {
     color: #ff5c5c;
 }
 
@@ -320,4 +320,8 @@ body {
     border-top: #fff 0.075em solid;
     margin: 0.6em 0 0 0;
     padding: 1em 0 1em 0;
+}
+
+#db_refresh {
+    color: #888;
 }
