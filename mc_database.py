@@ -349,6 +349,33 @@ def team_wins_event(team, event, cursor):
     return cursor.fetchone()[0]
 
 
+# Get the number of matches in which a team has scored 72 or more points
+def team_72_total(team, cursor):
+    cursor.execute(
+        f"""
+        SELECT COUNT(*) AS matches_72
+        FROM matches
+        WHERE (match_red_team1 = {team} OR match_blue_team1 = {team})
+        AND match_red_score > 71
+        """
+    )
+    return cursor.fetchone()[0]
+
+
+# Get the number of matches in which a team has scored 72 or more points at an event
+def team_72_event(team, event, cursor):
+    cursor.execute(
+        f"""
+        SELECT COUNT(*) AS matches_72
+        FROM matches
+        WHERE (match_red_team1 = {team} OR match_blue_team1 = {team})
+        AND match_red_score > 71
+        AND match_event = {event}
+        """
+    )
+    return cursor.fetchone()[0]
+
+
 # Get a team's high score across a season
 def team_hs_total(team, cursor):
     cursor.execute(
