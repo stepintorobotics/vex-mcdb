@@ -257,7 +257,60 @@ def stats_vrc(event, team1, team2, team3, team4):
 @app.route("/stats/<int:event>/<int:team1>/<int:team2>")
 def stats_iq(event, team1, team2):
     connection = mc_database.connect("indev.db")
+    cursor = connection.cursor()
+    response = {
+        "season": mc_database.event_season(event, cursor),
+        "teams": {
+            "iq1": {
+                "team_name": mc_database.team_name(team1, cursor),
+                "team_number": mc_database.team_number(team1, cursor),
+                "team_robot": mc_database.team_robot(team1, cursor),
+                "team_grade": mc_database.team_grade(team1, cursor),
+                "team_organisation": mc_database.team_organisation(team1, cursor),
+                "team_city": mc_database.team_city(team1, cursor),
+                "points_total": mc_database.team_total_points(team1, cursor),
+                "points_event": mc_database.team_event_points(team1, event, cursor),
+                "points_avg_total": int(mc_database.team_total_points(team1, cursor) / mc_database.team_matches_total(team1, cursor)),
+                "points_avg_event": int(mc_database.team_event_points(team1, event, cursor) / mc_database.team_matches_event(team1, event, cursor)),
+                "matches_total": mc_database.team_matches_total(team1, cursor),
+                "matches_event": mc_database.team_matches_event(team1, event, cursor),
+                "72_total": mc_database.team_72_total(team1, cursor),
+                "72_event": mc_database.team_72_event(team1, event, cursor),
+                "72_pct_total": int((mc_database.team_72_total(team1, cursor) / mc_database.team_matches_total(team1, cursor)) * 100),
+                "72_pct_event": int((mc_database.team_72_event(team1, event, cursor) / mc_database.team_matches_event(team1, event, cursor)) * 100),
+                "team_hs_total": mc_database.team_hs_total(team1, cursor),
+                "team_hs_event": mc_database.team_hs_event(team1, event, cursor),
+                "team_hs_total_match": mc_database.team_hs_total_match(team1, mc_database.team_hs_total(team1, cursor), cursor),
+                "team_hs_event_match": mc_database.team_hs_event_match(team1, event, mc_database.team_hs_event(team1, event, cursor), cursor),
+                "awards": mc_database.awards(team1, cursor)
+            },
+            "iq2": {
+                "team_name": mc_database.team_name(team2, cursor),
+                "team_number": mc_database.team_number(team2, cursor),
+                "team_robot": mc_database.team_robot(team2, cursor),
+                "team_grade": mc_database.team_grade(team2, cursor),
+                "team_organisation": mc_database.team_organisation(team2, cursor),
+                "team_city": mc_database.team_city(team2, cursor),
+                "points_total": mc_database.team_total_points(team2, cursor),
+                "points_event": mc_database.team_event_points(team2, event, cursor),
+                "points_avg_total": int(mc_database.team_total_points(team2, cursor) / mc_database.team_matches_total(team2, cursor)),
+                "points_avg_event": int(mc_database.team_event_points(team2, event, cursor) / mc_database.team_matches_event(team2, event, cursor)),
+                "matches_total": mc_database.team_matches_total(team2, cursor),
+                "matches_event": mc_database.team_matches_event(team2, event, cursor),
+                "72_total": mc_database.team_72_total(team2, cursor),
+                "72_event": mc_database.team_72_event(team2, event, cursor),
+                "72_pct_total": int((mc_database.team_72_total(team2, cursor) / mc_database.team_matches_total(team2, cursor)) * 100),
+                "72_pct_event": int((mc_database.team_72_event(team2, event, cursor) / mc_database.team_matches_event(team2, event, cursor)) * 100),
+                "team_hs_total": mc_database.team_hs_total(team2, cursor),
+                "team_hs_event": mc_database.team_hs_event(team2, event, cursor),
+                "team_hs_total_match": mc_database.team_hs_total_match(team2, mc_database.team_hs_total(team2, cursor), cursor),
+                "team_hs_event_match": mc_database.team_hs_event_match(team2, event, mc_database.team_hs_event(team2, event, cursor), cursor),
+                "awards": mc_database.awards(team2, cursor)
+            }
+        }
+    }
     connection.close()
+    return jsonify(response)
 
 if __name__ == "__main__":
     connection = mc_database.connect("indev.db")
